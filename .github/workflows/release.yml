@@ -31,8 +31,12 @@ jobs:
             runner: macos-14
             arduino_host: arm64-apple-darwin
             ext: ''
+          # x86_64 macOS is cross-compiled from the macos-14 (Apple Silicon)
+          # runner because macos-13 (Intel) is being retired in 2026 and queue
+          # times are unreliable. Xcode CLT on macos-14 ship both SDKs, so
+          # `cargo build --target x86_64-apple-darwin` from arm64 works.
           - target: x86_64-apple-darwin
-            runner: macos-13
+            runner: macos-14
             arduino_host: x86_64-apple-darwin
             ext: ''
           - target: x86_64-unknown-linux-gnu
