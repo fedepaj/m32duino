@@ -1,0 +1,70 @@
+{
+  "packages": [
+    {
+      "name": "m32",
+      "maintainer": "Federico Paglioni (@fedepaj)",
+      "websiteURL": "https://github.com/fedepaj/m32duino",
+      "email": "",
+      "help": {
+        "online": "https://github.com/fedepaj/m32duino#readme"
+      },
+      "platforms": [
+        {
+          "name": "NI Komplete Kontrol M32",
+          "architecture": "stm32",
+          "version": "0.0.1-alpha",
+          "category": "Contributed",
+          "url": "http://localhost:8765/m32-stm32-0.0.1-alpha.tar.bz2",
+          "archiveFileName": "m32-stm32-0.0.1-alpha.tar.bz2",
+          "checksum": "SHA-256:c33d1044836267b722e89675594fd646993cdbcfcff849cadf6ecbe875781452",
+          "size": "29341260",
+          "boards": [
+            {
+              "name": "NI Komplete Kontrol M32"
+            }
+          ],
+          "help": {
+            "online": "https://github.com/fedepaj/m32duino#readme"
+          },
+          "toolsDependencies": [
+            {
+              "packager": "m32",
+              "name": "m32-dfu",
+              "version": "0.0.1-alpha"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "xpack-arm-none-eabi-gcc",
+              "version": "12.2.1-1.2"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "CMSIS",
+              "version": "5.9.0"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "STM32Tools",
+              "version": "2.2.0"
+            }
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "m32-dfu",
+          "version": "0.0.1-alpha",
+          "systems": [
+            {
+              "host": "arm64-apple-darwin",
+              "url": "http://localhost:8765/m32-dfu-0.0.1-alpha-arm64-apple-darwin.tar.bz2",
+              "archiveFileName": "m32-dfu-0.0.1-alpha-arm64-apple-darwin.tar.bz2",
+              "checksum": "SHA-256:0f91a67485e3fb5f3fecf854d928de33d38d4ff9a7625507e7948705d70ff2cb",
+              "size": "300834"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

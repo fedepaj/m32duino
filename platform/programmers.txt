@@ -1,0 +1,17 @@
+# Arduino IDE's "Burn Bootloader" menu label is hardcoded and cannot be
+# renamed by a board package. We work around the misleading wording by
+# exposing one programmer entry whose display name spells out what the
+# action actually does on the M32 — flash the bundled NI factory firmware
+# image into the application partition (a full rollback to NI's stock
+# firmware; the bootloader at 0x08000000 is never touched).
+#
+# Workflow:
+#   1. Tools → Programmer → "Restore NI Factory Firmware"
+#   2. Tools → Burn Bootloader
+#   → m32_flash restore-factory runs and writes m32_ni_factory.bin to
+#     0x08003000.
+
+restore_ni_factory.name=Restore NI Factory Firmware
+restore_ni_factory.program.protocol=dfu
+restore_ni_factory.program.tool=m32-dfu
+restore_ni_factory.communication=usb

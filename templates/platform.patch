@@ -1,0 +1,50 @@
+# Patch applied on top of STM32duino's platform.txt at release-build time.
+# The `scripts/m32_dev.py` script fetches the pinned STM32duino platform.txt,
+# replaces the header and upload recipe, and ships the result as OUR platform.txt
+# inside the tarball.
+#
+# This file is NOT a unified diff — it's a section-based recipe parsed by m32_dev.py.
+
+# Replace header (name + version)
+REPLACE_HEADER
+name=NI Komplete Kontrol M32
+version={{VERSION}}
+# Upstream: Arduino_Core_STM32 {{STM32DUINO_VERSION}} (pinned)
+
+# Replace upload tool definition block with ours
+REPLACE_UPLOAD_TOOL
+## NI Komplete Kontrol M32 DFU uploader
+## ------------------------------------
+## `m32_flash` is a self-contained Rust binary (libusb statically linked, ~600
+## KB per host). Both subcommands accept the same CLI:
+##   m32_flash flash <bin>          ← Sketch → Upload         (validates vector
+##                                                              table, auto-DFU
+##                                                              via 1200 bps,
+##                                                              writes 0x08003000)
+##   m32_flash restore-factory      ← Tools → Burn Bootloader (writes the
+##                                                              bundled NI
+##                                                              factory firmware)
+tools.m32-dfu.path={runtime.tools.m32-dfu.path}
+tools.m32-dfu.cmd=m32_flash
+tools.m32-dfu.cmd.windows=m32_flash.exe
+
+tools.m32-dfu.upload.params.verbose=--verbose
+tools.m32-dfu.upload.params.quiet=
+tools.m32-dfu.upload.pattern="{path}/{cmd}" {upload.verbose} flash "{build.path}/{build.project_name}.bin"
+
+tools.m32-dfu.program.params.verbose=--verbose
+tools.m32-dfu.program.params.quiet=
+tools.m32-dfu.program.pattern="{path}/{cmd}" {program.verbose} restore-factory
+
+## Tools → Burn Bootloader runs erase.pattern THEN bootloader.pattern.
+## A real mass-erase would wipe the NI bootloader at 0x08000000..0x08003000
+## and brick the board until SWD recovery, so erase is a deliberate no-op
+## (m32_flash probe just enumerates USB, no writes). bootloader.pattern then
+## flashes the bundled NI factory firmware — same as program.pattern.
+tools.m32-dfu.erase.params.verbose=
+tools.m32-dfu.erase.params.quiet=
+tools.m32-dfu.erase.pattern="{path}/{cmd}" probe
+
+tools.m32-dfu.bootloader.params.verbose=--verbose
+tools.m32-dfu.bootloader.params.quiet=
+tools.m32-dfu.bootloader.pattern="{path}/{cmd}" {bootloader.verbose} restore-factory

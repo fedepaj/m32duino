@@ -1,0 +1,161 @@
+name: Release
+
+# Cross-builds the Rust m32_flash binary for all four Arduino-supported hosts,
+# packages the platform + tool tarballs, creates a GitHub Release for the
+# pushed tag, uploads the tarballs as Release assets, and commits the rendered
+# package_m32_index.json back to `main` (so the Boards Manager URL is stable).
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 0.0.1-alpha). Ignored for tag-triggered runs.'
+        required: false
+        default: '0.0.0-devbuild'
+
+permissions:
+  contents: write
+
+jobs:
+  build-rust:
+    name: Build Rust ${{ matrix.arduino_host }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            runner: macos-14
+            arduino_host: arm64-apple-darwin
+            ext: ''
+          - target: x86_64-apple-darwin
+            runner: macos-13
+            arduino_host: x86_64-apple-darwin
+            ext: ''
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-latest
+            arduino_host: x86_64-pc-linux-gnu
+            ext: ''
+          - target: x86_64-pc-windows-msvc
+            runner: windows-latest
+            arduino_host: x86_64-mingw32
+            ext: '.exe'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache cargo registry & target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            tools/m32_flasher/target
+          key: cargo-${{ matrix.target }}-${{ hashFiles('tools/m32_flasher/Cargo.lock', 'tools/m32_flasher/Cargo.toml') }}
+
+      - name: Build release binary
+        working-directory: tools/m32_flasher
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Upload binary artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: m32_flash-${{ matrix.arduino_host }}
+          path: tools/m32_flasher/target/${{ matrix.target }}/release/m32_flash${{ matrix.ext }}
+          if-no-files-found: error
+
+  package:
+    name: Package + Release
+    needs: build-rust
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve VERSION
+        id: ver
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VER="${GITHUB_REF_NAME#v}"
+          else
+            VER="${{ github.event.inputs.version }}"
+          fi
+          echo "VERSION=$VER" >> "$GITHUB_OUTPUT"
+          echo "Resolved VERSION: $VER"
+
+      - name: Install system deps
+        run: sudo apt-get update && sudo apt-get install -y curl tar bzip2 python3
+
+      - name: Download Rust binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Lay out RUST_BUILDS_DIR
+        id: rust_builds
+        run: |
+          mkdir -p rust_builds/{arm64-apple-darwin,x86_64-apple-darwin,x86_64-pc-linux-gnu,x86_64-mingw32}
+          mv artifacts/m32_flash-arm64-apple-darwin/m32_flash    rust_builds/arm64-apple-darwin/
+          mv artifacts/m32_flash-x86_64-apple-darwin/m32_flash   rust_builds/x86_64-apple-darwin/
+          mv artifacts/m32_flash-x86_64-pc-linux-gnu/m32_flash   rust_builds/x86_64-pc-linux-gnu/
+          mv artifacts/m32_flash-x86_64-mingw32/m32_flash.exe    rust_builds/x86_64-mingw32/
+          chmod +x rust_builds/*/m32_flash 2>/dev/null || true
+          echo "RUST_BUILDS_DIR=$GITHUB_WORKSPACE/rust_builds" >> "$GITHUB_OUTPUT"
+          ls -la rust_builds/*
+
+      - name: Build release artefacts
+        env:
+          RUST_BUILDS_DIR: ${{ steps.rust_builds.outputs.RUST_BUILDS_DIR }}
+        run: |
+          chmod +x scripts/m32_dev.py
+          ./scripts/m32_dev.py package \
+              --version "${{ steps.ver.outputs.VERSION }}" \
+              --asset-url-prefix "https://github.com/${{ github.repository }}/releases/download/v${{ steps.ver.outputs.VERSION }}/"
+
+      - name: Upload release artefacts (workflow_dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: m32duino-${{ steps.ver.outputs.VERSION }}
+          path: release/
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.VERSION }}
+          name: v${{ steps.ver.outputs.VERSION }}
+          body: |
+            Boards-Manager package for the NI Komplete Kontrol M32.
+
+            **To install in Arduino IDE:**
+
+            1. Preferences → Additional Boards Manager URLs, add:
+               ```
+               https://raw.githubusercontent.com/${{ github.repository }}/main/package_m32_index.json
+               ```
+            2. Tools → Board → Boards Manager → search "M32" → install.
+            3. Select board *NI Komplete Kontrol M32*, flash your sketch.
+          files: |
+            release/m32-stm32-${{ steps.ver.outputs.VERSION }}.tar.bz2
+            release/m32-dfu-${{ steps.ver.outputs.VERSION }}-x86_64-apple-darwin.tar.bz2
+            release/m32-dfu-${{ steps.ver.outputs.VERSION }}-arm64-apple-darwin.tar.bz2
+            release/m32-dfu-${{ steps.ver.outputs.VERSION }}-x86_64-pc-linux-gnu.tar.bz2
+            release/m32-dfu-${{ steps.ver.outputs.VERSION }}-x86_64-mingw32.tar.bz2
+
+      - name: Commit updated package_m32_index.json to main
+        if: github.event_name == 'push'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout main || git checkout -b main
+          cp release/package_m32_index.json package_m32_index.json
+          git add package_m32_index.json
+          git commit -m "Release v${{ steps.ver.outputs.VERSION }}: update package_m32_index.json" || echo "no changes"
+          git push origin main

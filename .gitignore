@@ -1,0 +1,43 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Build artefacts
+*.elf
+*.hex
+*.map
+build/
+
+# Release tarballs and JSON (generated, not tracked — the CI regenerates them)
+release/*.tar.bz2
+release/*.tar.gz
+release/.gitkeep
+!release/.keep
+
+# m32_dev.py local state
+release/.http-server.pid
+release/.http-server.log
+.m32_dev_work/
+
+# Rust build artefacts
+tools/m32_flasher/target/
+tools/m32_flasher/Cargo.lock
+
+# Heavy reverse-engineering captures kept local only (logic analyser traces,
+# firmware dumps, Ghidra projects, screenshots) — too big for git, not part
+# of what users / contributors need.
+wiki/m32_dump/

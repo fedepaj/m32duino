@@ -1,0 +1,96 @@
+{
+  "packages": [
+    {
+      "name": "m32",
+      "maintainer": "Federico Paglioni (@fedepaj)",
+      "websiteURL": "https://github.com/fedepaj/m32duino",
+      "email": "",
+      "help": {
+        "online": "https://github.com/fedepaj/m32duino#readme"
+      },
+      "platforms": [
+        {
+          "name": "NI Komplete Kontrol M32",
+          "architecture": "stm32",
+          "version": "{{VERSION}}",
+          "category": "Contributed",
+          "url": "{{PLATFORM_URL}}",
+          "archiveFileName": "{{PLATFORM_FILE}}",
+          "checksum": "SHA-256:{{PLATFORM_SHA256}}",
+          "size": "{{PLATFORM_SIZE}}",
+          "boards": [
+            { "name": "NI Komplete Kontrol M32" }
+          ],
+          "help": {
+            "online": "https://github.com/fedepaj/m32duino#readme"
+          },
+          "toolsDependencies": [
+            {
+              "packager": "m32",
+              "name": "m32-dfu",
+              "version": "{{VERSION}}"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "xpack-arm-none-eabi-gcc",
+              "version": "12.2.1-1.2"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "CMSIS",
+              "version": "5.9.0"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "STM32Tools",
+              "version": "2.2.0"
+            }
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "m32-dfu",
+          "version": "{{VERSION}}",
+          "systems": [
+            {
+              "host": "x86_64-apple-darwin",
+              "url": "{{DFU_DARWIN_X64_URL}}",
+              "archiveFileName": "{{DFU_DARWIN_X64_FILE}}",
+              "checksum": "SHA-256:{{DFU_DARWIN_X64_SHA256}}",
+              "size": "{{DFU_DARWIN_X64_SIZE}}"
+            },
+            {
+              "host": "arm64-apple-darwin",
+              "url": "{{DFU_DARWIN_ARM_URL}}",
+              "archiveFileName": "{{DFU_DARWIN_ARM_FILE}}",
+              "checksum": "SHA-256:{{DFU_DARWIN_ARM_SHA256}}",
+              "size": "{{DFU_DARWIN_ARM_SIZE}}"
+            },
+            {
+              "host": "x86_64-pc-linux-gnu",
+              "url": "{{DFU_LINUX_X64_URL}}",
+              "archiveFileName": "{{DFU_LINUX_X64_FILE}}",
+              "checksum": "SHA-256:{{DFU_LINUX_X64_SHA256}}",
+              "size": "{{DFU_LINUX_X64_SIZE}}"
+            },
+            {
+              "host": "x86_64-mingw32",
+              "url": "{{DFU_WINDOWS_X64_URL}}",
+              "archiveFileName": "{{DFU_WINDOWS_X64_FILE}}",
+              "checksum": "SHA-256:{{DFU_WINDOWS_X64_SHA256}}",
+              "size": "{{DFU_WINDOWS_X64_SIZE}}"
+            },
+            {
+              "host": "i686-mingw32",
+              "url": "{{DFU_WINDOWS_X64_URL}}",
+              "archiveFileName": "{{DFU_WINDOWS_X64_FILE}}",
+              "checksum": "SHA-256:{{DFU_WINDOWS_X64_SHA256}}",
+              "size": "{{DFU_WINDOWS_X64_SIZE}}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

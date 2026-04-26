@@ -1,0 +1,85 @@
+# ==========================================================================
+# NI Komplete Kontrol M32 — Arduino board definition (standalone, no
+# nesting under STM32duino's "Generic STM32F1" board). One top-level board.
+# This file is shipped verbatim inside the platform tarball.
+# ==========================================================================
+
+menu.opt=Optimize
+menu.usb=USB support (if available)
+menu.clock=System clock
+
+# ------------------------------------------- NI Komplete Kontrol M32
+m32.name=NI Komplete Kontrol M32
+
+m32.vid.0=0x17CC
+m32.pid.0=0x1862
+
+# --- Upload ---
+m32.upload.tool=m32-dfu
+m32.upload.protocol=dfu
+m32.upload.maximum_size=118784
+m32.upload.maximum_data_size=20480
+m32.upload.use_1200bps_touch=false
+m32.upload.wait_for_upload_port=false
+m32.upload.native_usb=true
+
+# --- "Burn Bootloader" → restores the bundled NI factory firmware (full rollback). ---
+m32.program.tool=m32-dfu
+m32.program.protocol=dfu
+m32.bootloader.tool=m32-dfu
+
+# --- Target ---
+m32.build.core=arduino
+m32.build.mcu=cortex-m3
+m32.build.board=NI_M32
+m32.build.series=STM32F1xx
+m32.build.product_line=STM32F103xB
+m32.build.variant=NI_M32
+m32.build.variant_h=variant_NI_M32.h
+m32.build.cmsis_lib_gcc=arm_cortexM3l_math
+m32.build.flash_offset=0x3000
+m32.build.extra_flags=-DVECT_TAB_OFFSET=0x3000
+# Bridges the USB menu selection (-DUSBD_USE_CDC etc.) into the compile recipe.
+# platform.txt's recipes reference {build.st_extra_flags}; its default is empty,
+# so without this line the menu.usb selections silently do nothing.
+m32.build.st_extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial} {build.clock_flags}
+
+# --- USB identity ---
+m32.build.vid=0x17CC
+m32.build.pid=0x1862
+m32.build.usb_product="NI M32 Custom FW"
+m32.build.usb_manufacturer="Komplete Kontrol M32 (custom)"
+
+# --- Optimisation menu ---
+m32.menu.opt.osstd=Smallest (-Os default)
+m32.menu.opt.osstd.build.flags.optimize=-Os
+m32.menu.opt.oslto=Smallest (-Os) with LTO
+m32.menu.opt.oslto.build.flags.optimize=-Os -flto
+m32.menu.opt.o1std=Fast (-O1)
+m32.menu.opt.o1std.build.flags.optimize=-O1
+m32.menu.opt.o2std=Faster (-O2)
+m32.menu.opt.o2std.build.flags.optimize=-O2
+m32.menu.opt.o3std=Fastest (-O3)
+m32.menu.opt.o3std.build.flags.optimize=-O3
+m32.menu.opt.ogstd=Debug (-g)
+m32.menu.opt.ogstd.build.flags.optimize=-g -Og
+
+# --- USB support menu (selects what STM32duino's core compiles in) ---
+# build.usb_flags (from platform.txt) already injects:
+#   -DUSBCON -DUSBD_VID=... -DUSBD_PID=... -DHAL_PCD_MODULE_ENABLED
+# so the menu entries only add the class-specific defines on top.
+m32.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
+m32.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
+m32.menu.usb.CDC=CDC (no generic 'Serial')
+m32.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
+m32.menu.usb.HID=HID (keyboard and mouse)
+m32.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+m32.menu.usb.none=None
+
+# --- System clock menu ---
+# 72 MHz is the M32 stock clock (matches the NI factory firmware). 48 MHz is
+# useful for power-sensitive use cases; USB stays at 48 MHz in both modes.
+m32.menu.clock.72mhz=72 MHz (default, matches NI factory firmware)
+m32.menu.clock.72mhz.build.clock_flags=-DM32_CLOCK_72MHZ -DF_CPU=72000000L
+m32.menu.clock.48mhz=48 MHz (low-power)
+m32.menu.clock.48mhz.build.clock_flags=-DM32_CLOCK_48MHZ -DF_CPU=48000000L
