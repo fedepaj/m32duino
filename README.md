@@ -1,4 +1,4 @@
-# m32duino
+# 🎹 m32duino
 
 Arduino board package for the **Native Instruments Komplete Kontrol M32**.
 
