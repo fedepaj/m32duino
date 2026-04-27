@@ -1,0 +1,98 @@
+{
+  "packages": [
+    {
+      "name": "m32",
+      "maintainer": "Federico Paglioni (@fedepaj)",
+      "websiteURL": "https://github.com/fedepaj/m32duino",
+      "email": "",
+      "help": {
+        "online": "https://github.com/fedepaj/m32duino#readme"
+      },
+      "platforms": [
+        {
+          "name": "NI Komplete Kontrol M32",
+          "architecture": "stm32",
+          "version": "0.0.1-alpha",
+          "category": "Contributed",
+          "url": "https://github.com/fedepaj/m32duino/releases/download/v0.0.1-alpha/m32-stm32-0.0.1-alpha.tar.bz2",
+          "archiveFileName": "m32-stm32-0.0.1-alpha.tar.bz2",
+          "checksum": "SHA-256:a813e02f62bf8cfa2d7fa7dd969e5b0cb6d0446132657f06dda92c7cb54dc664",
+          "size": "29334583",
+          "boards": [
+            {
+              "name": "NI Komplete Kontrol M32"
+            }
+          ],
+          "help": {
+            "online": "https://github.com/fedepaj/m32duino#readme"
+          },
+          "toolsDependencies": [
+            {
+              "packager": "m32",
+              "name": "m32-dfu",
+              "version": "0.0.1-alpha"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "xpack-arm-none-eabi-gcc",
+              "version": "12.2.1-1.2"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "CMSIS",
+              "version": "5.9.0"
+            },
+            {
+              "packager": "STMicroelectronics",
+              "name": "STM32Tools",
+              "version": "2.2.0"
+            }
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "m32-dfu",
+          "version": "0.0.1-alpha",
+          "systems": [
+            {
+              "host": "x86_64-apple-darwin",
+              "url": "https://github.com/fedepaj/m32duino/releases/download/v0.0.1-alpha/m32-dfu-0.0.1-alpha-x86_64-apple-darwin.tar.bz2",
+              "archiveFileName": "m32-dfu-0.0.1-alpha-x86_64-apple-darwin.tar.bz2",
+              "checksum": "SHA-256:34f3af16cbd2f291eeffa5cb00e92f846313d0aee883e9e861414be82d0090a9",
+              "size": "304851"
+            },
+            {
+              "host": "arm64-apple-darwin",
+              "url": "https://github.com/fedepaj/m32duino/releases/download/v0.0.1-alpha/m32-dfu-0.0.1-alpha-arm64-apple-darwin.tar.bz2",
+              "archiveFileName": "m32-dfu-0.0.1-alpha-arm64-apple-darwin.tar.bz2",
+              "checksum": "SHA-256:27ca6dd453ade813cc3f240a335d541dd5249e5b68d3005f6cea56bea7db24c2",
+              "size": "302330"
+            },
+            {
+              "host": "x86_64-pc-linux-gnu",
+              "url": "https://github.com/fedepaj/m32duino/releases/download/v0.0.1-alpha/m32-dfu-0.0.1-alpha-x86_64-pc-linux-gnu.tar.bz2",
+              "archiveFileName": "m32-dfu-0.0.1-alpha-x86_64-pc-linux-gnu.tar.bz2",
+              "checksum": "SHA-256:dd3cee85e87a379a4a15bd484015afed920acf420bfe54d61e46e55db118aa3c",
+              "size": "336912"
+            },
+            {
+              "host": "x86_64-mingw32",
+              "url": "https://github.com/fedepaj/m32duino/releases/download/v0.0.1-alpha/m32-dfu-0.0.1-alpha-x86_64-mingw32.tar.bz2",
+              "archiveFileName": "m32-dfu-0.0.1-alpha-x86_64-mingw32.tar.bz2",
+              "checksum": "SHA-256:122c115c85313de8b12bf44ed38dbff925ca5bd741d0c32451b1a251e91094af",
+              "size": "271307"
+            },
+            {
+              "host": "i686-mingw32",
+              "url": "https://github.com/fedepaj/m32duino/releases/download/v0.0.1-alpha/m32-dfu-0.0.1-alpha-x86_64-mingw32.tar.bz2",
+              "archiveFileName": "m32-dfu-0.0.1-alpha-x86_64-mingw32.tar.bz2",
+              "checksum": "SHA-256:122c115c85313de8b12bf44ed38dbff925ca5bd741d0c32451b1a251e91094af",
+              "size": "271307"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
